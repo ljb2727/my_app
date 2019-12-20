@@ -1,159 +1,213 @@
 <template>
-    <v-dialog
-        ref="menu2"
-        v-model="menu2"
-        :close-on-content-click="false"
-        transition="dialog-bottom-transition"
-        fullscreen="fullscreen"
-        hide-overlay="hide-overlay"
-        readonly="readonly"
-        min-width="290px">
-        <template v-slot:activator="{ on }">
-            <v-card v-on="on" outlined="outlined" :ripple="false" tile="tile" class="my-1">
-                <v-list-item class="grow pa-0">
-                    <v-list-item-avatar class="mx-0">
-                        <v-icon>mdi-map-marker</v-icon>
-                    </v-list-item-avatar>
-                    <span v-if="cnt == 0">지역을 선택해주세요.</span>
-                    <v-list-item-content>
-                        <v-list-item-title>
-                            <v-chip-group multiple="multiple" column="column">
-                                <v-chip
-                                    v-for="(item, index) in basePlace.filter(e => e.active == true)"
-                                    :key="index"
-                                    close="close"
-                                    :ripple="false"
-                                    small="small"
-                                    @click:close="closeChips(item.name)">
-                                    {{ item.name }}
-                                </v-chip>
-                            </v-chip-group>
+  <v-dialog
+    ref="menu2"
+    v-model="menu2"
+    :close-on-content-click="false"
+    transition="dialog-bottom-transition"
+    fullscreen="fullscreen"
+    hide-overlay="hide-overlay"
+    readonly="readonly"
+    min-width="290px"
+  >
+    <template v-slot:activator="{ on }">
+      <v-card
+        outlined="outlined"
+        :ripple="false"
+        tile="tile"
+        class="my-1"
+        v-on="on"
+      >
+        <v-list-item class="grow pa-0">
+          <v-list-item-avatar class="mx-0">
+            <v-icon>mdi-map-marker</v-icon>
+          </v-list-item-avatar>
+          <span v-if="cnt == 0">지역을 선택해주세요.</span>
+          <v-list-item-content>
+            <v-list-item-title>
+              <v-chip-group
+                multiple="multiple"
+                column="column"
+              >
+                <v-chip
+                  v-for="(item, index) in basePlace.filter(e => e.active == true)"
+                  :key="index"
+                  close="close"
+                  :ripple="false"
+                  small="small"
+                  @click:close="closeChips(item.name)"
+                >
+                  {{ item.name }}
+                </v-chip>
+              </v-chip-group>
+            </v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      </v-card>
+    </template>
 
-                        </v-list-item-title>
-                    </v-list-item-content>
-                </v-list-item>
-            </v-card>
-        </template>
+    <v-card>
+      <v-tabs
+        v-model="tab"
+        fixed-tabs
+        background-color="primary"
+        dark="dark"
+        icons-and-text
+        height="56px"
+      >
+        <v-tab href="#tab-1">
+          11
+          <v-icon>mdi-golf</v-icon>
+        </v-tab>
+        <v-tab href="#tab-2">
+          2
+          <v-icon>mdi-golf-cart</v-icon>
+        </v-tab>
+      </v-tabs>
 
-        <v-card>
-            <v-tabs
-                fixed-tabs
-                background-color="primary"
-                dark="dark"
-                icons-and-text
-                height="56px"
-                v-model="tab">
-                <v-tab href="#tab-1">
-                    11
-                    <v-icon>mdi-golf</v-icon>
-                </v-tab>
-                <v-tab href="#tab-2">
-                    2
-                    <v-icon>mdi-golf-cart</v-icon>
-                </v-tab>
-            </v-tabs>
+      <v-tabs-items v-model="tab">
+        <v-tab-item
+          :transition="false"
+          :reverse-transition="false"
+          value="tab-1"
+        >
+          <v-container>
+            <v-row>
+              <v-col
+                v-for="(item,index) in basePlace"
+                :key="index"
+                :cols="item.cols"
+              >
+                <v-btn
+                  block="block"
+                  large="large"
+                  tile="tile"
+                  color="gray"
+                  :class="{'active': item.active}"
+                  @click="selPlace(item.name, index)"
+                >
+                  {{ item.name }}{{ item.active }}
+                </v-btn>
+              </v-col>
+            </v-row>
+          </v-container>
+          <v-card>
+            <v-footer
+              fixed="fixed"
+              padless="padless"
+              class="font-weight-medium"
+            >
+              <v-col
+                class="text-center pa-0"
+                cols="12"
+              >
+                <v-chip
+                  v-for="(item, index) in basePlace.filter(e => e.active == true)"
+                  :key="index"
+                  class="ma-2"
+                  label="label"
+                  close="close"
+                  @click="closeChips(item.name)"
+                  @click:close="closeChips(item.name)"
+                >
+                  {{ item.name }}
+                </v-chip>
+              </v-col>
+              <v-btn
+                color="primary"
+                block="block"
+                large="large"
+                tile="tile"
+                @click="closePlace"
+              >
+                완료{{ cnt }}
+              </v-btn>
+            </v-footer>
+          </v-card>
+        </v-tab-item>
 
-            <v-tabs-items v-model="tab">
-                <v-tab-item :transition="false" :reverse-transition="false" value="tab-1">
-                    <v-container>
-                        <v-row>
-                            <v-col v-for="(item,index) in basePlace" :key="index" :cols="item.cols">
-                                <v-btn
-                                    block="block"
-                                    large="large"
-                                    tile="tile"
-                                    color="gray"
-                                    :class="{'active': item.active}"
-                                    @click="selPlace(item.name, index)">{{item.name}}{{item.active}}</v-btn>
-                            </v-col>
-                        </v-row>
-                    </v-container>
-                    <v-card>
-                        <v-footer fixed="fixed" padless="padless" class="font-weight-medium">
-                            <v-col class="text-center pa-0" cols="12">
-                                <v-chip
-                                    class="ma-2"
-                                    label="label"
-                                    close="close"
-                                    @click="closeChips(item.name)"
-                                    @click:close="closeChips(item.name)"
-                                    v-for="(item, index) in basePlace.filter(e => e.active == true)"
-                                    :key="index">{{item.name}}</v-chip>
-                            </v-col>
-                            <v-btn
-                                color="primary"
-                                block="block"
-                                large="large"
-                                tile="tile"
-                                @click="closePlace">완료{{cnt}}</v-btn>
-                        </v-footer>
-                    </v-card>
-                </v-tab-item>
-
-                <!-- 2nd tap -->
-                <v-tab-item :transition="false" :reverse-transition="false" value="tab-2">
-                        {{item}}
-                    <v-list class="pa-0">
-                        <v-list-item-group v-model="item" color="primary" mandatory>
-                            <v-row no-gutters="no-gutters" style="flex-wrap: nowrap">
-                                <v-col style="flex-basis: 130px;flex-grow:0">
-                                    <v-list-item
-                                        dense="dense"
-                                        v-for="(region, index) in items"
-                                        :key="index"
-                                        :ripple="false"
-                                    >
-                                        {{region.region}}
-                                    </v-list-item>
-                                </v-col>
-                                <v-col style="flex-grow:1">
-                                    <v-list-item-group multiple>
-                                        <v-list-item dense="dense" v-for="(sub,i) in items[0].list" :key="i">
-
-                                            <template v-slot:default="{ active, toggle }">
-                                                <v-list-item-content>
-                                                    <v-list-item-title>
-                                                        {{sub}}
-                                                    </v-list-item-title>
-                                                </v-list-item-content>
-                                                <v-list-item-action>
-                                                    <v-checkbox
-                                                    :input-value="active"
-                                                    @click="toggle"
-                                                    ></v-checkbox>
-                                                </v-list-item-action>
-                                            </template>
-
-                                            
-                                        </v-list-item>
-                                    </v-list-item-group>
-                                </v-col>
-                            </v-row>
-                        </v-list-item-group>
-                    </v-list>
-                    <!-- <v-container>
-                        <ul class="gegion" v-for="(item,index) in items" :key="index">
-                            <li>{{item.region}}</li>
-                            <ul class="sub">
-                                <li v-for="(sub,i) in item.list" :key="i">
-                                    <v-checkbox
-                                        v-model="selected"
-                                        :label="sub"
-                                        :value="sub"
-                                        dense="dense"
-                                        hide-details="hide-details"
-                                        :ripple="false"></v-checkbox>
-                                </li>
-                            </ul>
-                        </ul>
-                        <v-divider></v-divider>
-                        {{selected}}
-                    </v-container> -->
-                </v-tab-item>
-            </v-tabs-items>
-
-        </v-card>
-    </v-dialog>
+        <!-- 2nd tap -->
+        <v-tab-item
+          :transition="false"
+          :reverse-transition="false"
+          value="tab-2"
+        >
+          {{ item }}
+          <v-list class="pa-0">
+            <v-list-item-group
+              v-model="item"
+              color="primary"
+              mandatory
+            >
+              <v-row
+                no-gutters="no-gutters"
+                style="flex-wrap: nowrap"
+              >
+                <v-col style="flex-basis: 130px;flex-grow:0">
+                  <v-list-item
+                    v-for="(region, index) in items"
+                    :key="index"
+                    dense="dense"
+                    :ripple="false"
+                  >
+                    {{ region.region }}
+                  </v-list-item>
+                </v-col>
+                <v-col style="flex-grow:1">
+                  <v-list-item-group multiple>
+                    <v-list-item
+                      v-for="(sub,i) in items[0].list"
+                      :key="i"
+                      dense="dense"
+                    >
+                      <template v-slot:default="{ active, toggle }">
+                        <v-list-item-content>
+                          <v-list-item-title>
+                            {{ sub }}
+                          </v-list-item-title>
+                        </v-list-item-content>
+                        <v-list-item-action>
+                          <v-checkbox
+                            :input-value="active"
+                            @click="toggle"
+                          />
+                        </v-list-item-action>
+                      </template>
+                    </v-list-item>
+                  </v-list-item-group>
+                </v-col>
+              </v-row>
+            </v-list-item-group>
+          </v-list>
+          <!-- <v-container>
+            <ul
+              v-for="(item,index) in items"
+              :key="index"
+              class="gegion"
+            >
+              <li>{{ item.region }}</li>
+              <ul class="sub">
+                <li
+                  v-for="(sub,i) in item.list"
+                  :key="i"
+                >
+                  <v-checkbox
+                    v-model="selected"
+                    :label="sub"
+                    :value="sub"
+                    dense="dense"
+                    hide-details="hide-details"
+                    :ripple="false"
+                  />
+                </li>
+              </ul>
+            </ul>
+            <v-divider />
+            {{ selected }}
+          </v-container> -->
+        </v-tab-item>
+      </v-tabs-items>
+    </v-card>
+  </v-dialog>
 </template>
 <script>
     export default {
