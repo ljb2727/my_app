@@ -43,6 +43,7 @@
           </v-list-item-content>
         </v-list-item>
       </v-card>
+      mdi-calendar
     </template>
 
     <v-card>
@@ -273,6 +274,5 @@
 </style>
 <style scoped>
 ul,li{list-style: none;margin:0;padding:0}
-ul.gegion{}
 ul.gegion .sub li:first-child > div{margin-top: 0;}
 </style>
